@@ -1,4 +1,4 @@
-version: '3'
+
 services:
   clickhouse-server:
     image: yandex/clickhouse-server
@@ -6,9 +6,18 @@ services:
       - 8123:8123
     volumes:
       - ./users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./clickhouse-data:/var/lib/clickhouse
     networks:
       - clickhouse_network
-
+  click-ui:
+    image: spoonest/clickhouse-tabix-web-client
+    environment:
+      CH_NAME: erp_logs
+      CH_HOST: localhost:8123
+    depends_on:
+        - clickhouse-server
+    ports:
+      - "8088:80"
 networks:
   clickhouse_network:
     driver: bridge
